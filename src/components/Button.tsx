@@ -24,7 +24,7 @@ export function Button({ title, variant = "solid", isLoading = false, ...rest }:
                 <ButtonSpinner color="$white" />
             ) : (
                 <Text
-                    color={variant === "outline" ? "$green500" : color = "$white"}
+                    color={variant === "outline" ? "$green500" : "$white"}
                     fontFamily="$heading"
                     fontSize="$sm"
                 >
