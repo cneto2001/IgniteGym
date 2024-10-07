@@ -35,11 +35,11 @@ export function ToastMessage({
                     <Icon as={X} color="$coolGray50" size="md" />
                 </Pressable>
 
-                <ToastTitle color="$white" fontFamily="heading">
+                <ToastTitle color="$white" fontFamily="$heading">
                     {title}
                 </ToastTitle>
 
-                {description && <ToastDescription color="$white" fontFamily="body">
+                {description && <ToastDescription color="$white" fontFamily="$body">
                     {description}
                 </ToastDescription>}
             </VStack>
