@@ -1,4 +1,3 @@
-import { useContext } from "react";
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { Box } from "@gluestack-ui/themed";
 

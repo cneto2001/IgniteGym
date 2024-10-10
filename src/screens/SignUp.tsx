@@ -49,6 +49,7 @@ export function SignUp() {
     });
 
     const navigation = useNavigation();
+
     function handleGoBack() {
         navigation.goBack();
     }

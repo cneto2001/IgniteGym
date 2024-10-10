@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { VStack, Image, Center, Text, Heading, ScrollView, useToast, onChange } from "@gluestack-ui/themed";
+import { VStack, Image, Center, Text, Heading, ScrollView, useToast } from "@gluestack-ui/themed";
 import { useNavigation } from "@react-navigation/native";
 
 import { AuthNavigatorRoutesProps } from "@routes/auth.routes";
@@ -36,12 +36,13 @@ export function SignIn() {
     async function handleSignIn({ email, password }: FormData) {
         try {
             setIsLoading(true);
+
             await signIn(email, password);
         } catch (error) {
-            const isAppError = error instanceof AppError;
-            const title = isAppError ? error.message : "Não foi possível entrar. Tente novamente mais tarde";
 
-            setIsLoading(false);
+            const isAppError = error instanceof AppError;
+
+            const title = isAppError ? error.message : "Não foi possível entrar. Tente novamente mais tarde";
 
             toast.show({
                 placement: 'top',
@@ -54,6 +55,8 @@ export function SignIn() {
                     />
                 )
             });
+        } finally {
+            setIsLoading(false);
         }
     }
 
@@ -78,7 +81,7 @@ export function SignIn() {
                     </Center>
 
                     <Center gap="$2">
-                        <Heading color="$gray100" fontSize="xl" mb={6} fontFamily="$heading">
+                        <Heading color="$gray100" fontSize="$xl" mb={6} fontFamily="$heading">
                             Acesse a sua conta
                         </Heading>
                     </Center>

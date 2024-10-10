@@ -10,7 +10,6 @@ import { config } from './config/gluestack-ui.config';
 
 import { Routes } from '@routes/index';
 
-import { AuthContext } from '@contexts/AuthContext';
 import { Loading } from '@components/Loading';
 
 import { AuthContextProvider } from '@contexts/AuthContext';
