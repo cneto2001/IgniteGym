@@ -5,8 +5,10 @@ import { Controller, ResolverOptions, useForm } from "react-hook-form";
 
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
-import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from 'yup';
+import { yupResolver } from "@hookform/resolvers/yup";
+
+import defaultUserPhotoImg from "@assets/userPhotoDefault.png"
 
 import { api } from "@services/api";
 import { ToastMessage } from "@components/ToastMessage";
@@ -52,7 +54,6 @@ const profileSchema = yup.object({
 
 export function Profile() {
     const [isUpdating, setIsUpdating] = useState(false);
-    const [userPhoto, setUserPhoto] = useState("https:github.com/orodrigogo.png");
 
     const toast = useToast();
     const { user, updateUserProfile } = useAuth();
@@ -105,9 +106,33 @@ export function Profile() {
                     name: `${user.name}.${fileExtension}`.toLowerCase(),
                     uri: photoURI,
                     type: `${photoSelected}/${fileExtension}`
-                }
+                } as any;
 
-                console.log(photoFile)
+                const userPhotoUploadForm = new FormData();
+                userPhotoUploadForm.append("avatar", photoFile);
+
+                const avatarUpdatedResponse = await api.patch("/users/avatar", userPhotoUploadForm, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+
+                const userUpdated = user;
+                userUpdated.avatar = avatarUpdatedResponse.data.avatar;
+                updateUserProfile(userUpdated);
+
+                toast.show({
+                    placement: "top",
+                    render: ({ id }) => (
+                        <ToastMessage
+                            id={id}
+                            action="success"
+                            title="Foto atualizada!"
+                            onClose={() => toast.close(id)}
+                        />
+                    )
+                });
+
             }
         } catch (error) {
             console.log(error);
@@ -164,7 +189,11 @@ export function Profile() {
             <ScrollView contentContainerStyle={{ paddingBottom: 36 }}>
                 <Center mt="$6" px="$10">
                     <UserPhoto
-                        source={{ uri: userPhoto }}
+                        source={
+                            user.avatar
+                                ? { uri: `${api.defaults.baseURL}/avatar/${user.avatar}` }
+                                : defaultUserPhotoImg
+                        }
                         alt="Foto do usuário"
                         size="xl"
                     />
