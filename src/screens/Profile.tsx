@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ScrollView, TouchableOpacity } from "react-native";
 import { Center, VStack, Text, Heading, useToast, onChange } from "@gluestack-ui/themed";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, ResolverOptions, useForm } from "react-hook-form";
 
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
@@ -38,14 +38,16 @@ const profileSchema = yup.object({
         .nullable()
         .transform((value) => !!value ? value : null)
         .oneOf([yup.ref("password"), null], "A confirmação de senha não confere")
+
+        // @ts-expect-error
         .when("password", {
-            is: (Field: any) => Field,
+            is: (Field: any) => true,
             then: yup
                 .string()
                 .nullable()
                 .required("Informe a confirmação da senha")
-                .transform((value) => !!value ? value : null)
-        })
+                .transform((value) => !!value ? value : null) as yup.StringSchema<string | undefined, yup.AnyObject, undefined, "">
+        }),
 });
 
 export function Profile() {
@@ -59,8 +61,8 @@ export function Profile() {
             name: user.name,
             email: user.email
         },
-        resolver: yupResolver(profileSchema)
-    });
+        resolver: yupResolver(profileSchema),
+    } as unknown as ResolverOptions<FormDataProps>);
 
     async function handleUserPhotoSelect() {
         try {
@@ -97,10 +99,18 @@ export function Profile() {
                     })
                 }
 
-                setUserPhoto(photoURI)
+                const fileExtension = photoURI.split('.').pop();
+
+                const photoFile = {
+                    name: `${user.name}.${fileExtension}`.toLowerCase(),
+                    uri: photoURI,
+                    type: `${photoSelected}/${fileExtension}`
+                }
+
+                console.log(photoFile)
             }
         } catch (error) {
-            console.log(error)
+            console.log(error);
         }
     }
 
